@@ -13,11 +13,55 @@ require_once('db_connection.php');
     <div>
         <?php
         if(isset($_POST['create'])){
-            $firstname     =$_POST['firstname'];
-            $lastname      =$_POST['lastname'];
-            $email         =$_POST['email'];
-            $phonenumber   =$_POST['phonenumber'];
-            $password      =$_POST['password'];
+
+            if (empty($_POST['firstname'])){ ?>
+                <div class="alert alert-danger">
+                <strong>Error!</strong> First Name is Required.
+                </div>
+                <?php
+            echo '<br>';
+            }else{
+                $firstname     =$_POST['firstname'];
+            }
+
+            if (empty($_POST['lastname'])){?>
+                <div class="alert alert-danger">
+                <strong>Error!</strong> Last Name is Required.
+                </div>
+                <?php
+            echo '<br>';
+            }else{
+                $lastname     =$_POST['lastname']; 
+            }
+
+            if (empty($_POST['email'])){?>
+             <div class="alert alert-danger">
+               <strong>Error!</strong> Email is Required.
+               </div>
+               <?php
+            echo '<br>';
+            }else{
+                $email     =$_POST['email'];
+            }
+            if (empty($_POST['phonenumber'])){?>
+                <div class="alert alert-danger">
+                <strong>Error!</strong> Phone Number is Required.
+                </div>
+                <?php
+            echo '<br>';
+            }else{
+                $phonenumber   =$_POST['phonenumber'];
+            }
+            if (empty($_POST['password'])){?>
+                <div class="alert alert-danger">
+                <strong>Error!</strong> Password is Required.
+                </div>
+                <?php
+            echo '<br>';
+            }else{
+                $password      =$_POST['password']; 
+            }
+        }
 
             $sql = $db->prepare("INSERT INTO users (firstname, lastname, email, phonenumber, password ) VALUES(?,?,?,?,?)");
            
@@ -34,10 +78,18 @@ require_once('db_connection.php');
                 echo 'There were errors while saving the data.';
                 echo $result;
             }
-        }
         ?>
     </div>    
-
+    <?php
+    if(isset($mag))
+    {
+        echo "<strong>Error!</strong> $mag";
+    }
+    if(isset($mag1))
+    {
+        echo "<strong><span class='err'> $mag1</span></strong>";
+    }
+    ?>
 
     <div>
         <form action = "registration.php" method="post">
@@ -49,29 +101,73 @@ require_once('db_connection.php');
                 <p>Fill up the form with correct values.</p>
                 <hr class ="mb-3">
                 <label for ="firstname"><b>First Name</b></label>
-                <input class="form-control" type ="text" name="firstname" required>
+                <input class="form-control" id="firstname" type ="text" name="firstname">
                 <br>
 
                 <label for ="lastname"><b>Last Name</b></label>
-                <input class="form-control" type ="text" name="lastname" required>
+                <input class="form-control" id="lastname" type ="text" name="lastname" >
                 <br>
 
                 <label for ="email"><b>Email Address</Address></b></label>
-                <input class="form-control" type ="email" name="email" required>
+                <input class="form-control" id="email" type ="email" name="email" >
                 <br>
 
                 <label for ="phonenumber"><b>Phone Number</b></label>
-                <input class="form-control" type ="text" name="phonenumber" required minlength="10" maxlength="13">
+                <input class="form-control" id="phonenumber" type ="text" name="phonenumber" >
                 <br>
 
                 <label for ="password"><b>Password</b></label>
-                <input class="form-control" type ="password" name="password" required>
+                <input class="form-control" id="password" type ="password" name="password" >
                 <hr class ="mb-3">
 
-                <input class="btn btn-primary" type ="submit" name="create" value="Sign Up">
+                <input class="btn btn-primary" type ="submit" id="register" name="create" value="Sign Up">
             </div>
         </form>
-    </div>           
-    
+    </div>       
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>  
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="text/javascript">
+    $(function(){
+        $(function(){
+            $('#register').click(function(e){
+
+                 var valid = this.form.checkValidity();
+                 if (valid){
+
+                 var firstname     = $('#firstname').val();
+                 var lastname      = $('#lastname').val();
+                 var email         = $('#email').val();
+                 var phonenumber   = $('#phonenumber').val();
+                 var password      = $('#password').val();
+                    e.preventDefault();
+
+                    $.ajax({
+                        type: 'POST',
+                        url:  'process.php',
+                        data: {firstname: firstname,lastname: lastname,email: email,phonenumber: phonenumber,password: password},
+                        sucecess: function(data){
+                           swal.fire({
+                                      'title': 'Successful',
+                                      'text': 'Successfully Registered.',
+                                      'type': 'Success'
+                                    })  
+                        },
+                        error: function(data){
+                            swal.fire({
+                           'title': 'Errors',
+                           'text': 'There wase errors while saving the data.',
+                           'type': 'Error'
+                           })  
+                        },
+                    
+                    });
+                
+                
+                    
+                }
+              
+            });
+    }); 
+    </script>
 </body>
 </html>
